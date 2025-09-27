@@ -2,7 +2,7 @@
 
 bool prime(int x) {
     if(x < 2) {
-        return true;
+        return false;
     }
     else if(x == 2) {
         return true;

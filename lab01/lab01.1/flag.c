@@ -22,7 +22,7 @@ void find_multiples(int n) {
 void check_prime(int n) {
     printf("Проверка, является ли %d простым числом.\n", n);
     if(n < 2) {
-        printf("Составное\n");
+        printf("Не простое и не составное\n");
     }
     else if(n == 2) {
         printf("Простое\n");
