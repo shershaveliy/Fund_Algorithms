@@ -6,42 +6,40 @@
 
 #define MAX_ITERATIONS 10000000
 
-long long factorial(int n) {
-    long long result = 1;
-    for (int i = 2; i <= n; i++) {
-        if (result > LLONG_MAX / i){
-            printf("Переполнение при вычислении %d!\n", n);
-            break;
-        }
-        result *= i;
-    }
-    return result;
-}
-
-long long compositionRange(int start, int end) {
-    long long result = 1;
-    for (int i = start; i <= end; i++) {
-        if (result > LLONG_MAX / i){
-            printf("Переполнение в диапазоне от %d до %d\n", start, end);
-            break;
-        }
-        result *= i;
-    }
-    return result;
-}
-
 long long coefficient_C(int n, int k) {
-    // C(n,k) = n! / (k! * (n-k)!)
     if (k < 0 || k > n) return 0;
     if (k == 0 || k == n) return 1;
     
-    // Симметрия C(n,k) = C(n,n-k)
-    // C(n,k) = [(n-k+1) * ... *(n-1) * n] / [1 * 2 * ... * k]
-    if (k > n - k){
+    // Cимметрия для уменьшения k
+    if (k > n - k) {
         k = n - k;
     }
     
-    return compositionRange(n - k + 1, n) / factorial(k);
+    // Вычисляем C(n,k) = n*(n-1)*...*(n-k+1) / k!
+    long long result = 1;
+    for (int i = 1; i <= k; i++) {
+        if (result > LLONG_MAX / (n - i + 1)) {
+            printf("Переполнение при вычислении C(%d,%d)\n", n, k);
+            return 0;
+        }
+        result = result * (n - i + 1) / i;
+    }
+    return result;
+}
+
+long long factorial(int n) {
+    if (n < 0) return 0;
+    if (n == 0 || n == 1) return 1;
+    
+    long long result = 1;
+    for (int i = 2; i <= n; i++) {
+        if (result > LLONG_MAX / i) {
+            printf("Переполнение при вычислении %d!\n", n);
+            return 0;
+        }
+        result *= i;
+    }
+    return result;
 }
 
 bool findPrime(int limit, int* current_prime) {
@@ -105,11 +103,46 @@ double e_series(double epsilon) {
     return sum;
 }
 
-double e_equation() {
-    return exp(1.0);
+double e_equation(double epsilon) {
+    // ln(x) = 1
+    double l = 2.0, r = 3.0;
+    while (r - l > epsilon) {
+        double mid = (l + r) / 2;
+        if (log(mid) > 1.0) r = mid;
+        else l = mid;
+    }
+    return (l + r) / 2;
 }
 
 // вычисление π
+double pi_limit(double epsilon) {
+    double current = 1.0, previous = 0.0;
+    unsigned long n = 0;
+    double product = 1.0;
+    
+    do {
+        n++;
+        previous = current;
+        
+        // вычислять рекуррентно чтобы избежать переполнения:
+        // term(n) = term(n-1) * (4 * n^2) / ((4 * n^2 - 1)
+        
+        double term = (4.0 * n * n) / (4.0 * n * n - 1.0);
+        product *= term;
+        current = 2.0 * product;
+        
+        n++;
+        
+        if (!isfinite(current)) {
+            printf("Переполнение на шаге n = %lu\n", n);
+            return 0;
+        }
+        
+    } while (fabs(current - previous) >= epsilon && n < MAX_ITERATIONS);
+    
+    return current;
+}
+/*
 double pi_limit(double epsilon) {
     double current = 1.0, previous = 0.0;
     unsigned long n = 0;
@@ -118,14 +151,20 @@ double pi_limit(double epsilon) {
         n++;
         previous = current;
         
-        double numerator = 16.0 * pow(n, 4); // n-й множитель = [16 × n⁴] / [2n × (2n-1)]²
+        double numerator = 16.0 * pow(n, 4); // n-й множитель = [16 × n^4] / [2n × (2n-1)]^2
         double denominator = pow(2 * n * (2 * n - 1), 2);
         current *= numerator / denominator;
+    
+        if (!isfinite(current)) {
+            printf("Переполнение на шаге n = %lu\n", n);
+            return 0;
+        }
         
     } while (fabs(current - previous) >= epsilon * n && n < MAX_ITERATIONS);
     // Учитываю замедление сходимости O(1/n), чтобы не зацикливаться на микро-изменениях
     return current / n;
-}
+} при epsilon например 0.0000001 переполнение но при 0.001 все идеально
+*/
 
 double pi_series(double epsilon) {
     double current = 0.0, previous = 0.0;
@@ -144,10 +183,16 @@ double pi_series(double epsilon) {
     return current;
 }
 
-double pi_equation() {
-    return acos(-1.0);
+double pi_equation(double epsilon) {
+    // cos(x/2) = 0
+    double l = 3.0, r = 3.2;
+    while (r - l > epsilon) {
+        double mid = (l + r) / 2;
+        if (cos(mid/2) > 0) l = mid;
+        else r = mid;
+    }
+    return (l + r) / 2;
 }
-
 // вычисление ln2
 double ln2_limit(double epsilon) {
     double previous = 0.0, current = 0.0;
@@ -167,7 +212,7 @@ double ln2_series(double epsilon) {
     double current = 0.0, previous = 0.0;
     unsigned long n = 0;
     
-    do { // ln(1+x) = x - x²/2 + x³/3 - ... при x=1 даёт 1 - 1/2 + 1/3 - ... = ln(2)
+    do { // ln(1+x) = x - x^2/2 + x^3/3 - ... при x=1 даёт 1 - 1/2 + 1/3 - ... = ln(2)
         n++;
         previous = current;
         
@@ -179,11 +224,18 @@ double ln2_series(double epsilon) {
     return current;
 }
 
-double ln2_equation() {
-    return log(2.0);
+double ln2_equation(double epsilon) {
+    // 2^x = e
+    double l = 0.0, r = 1.0;
+    while (r - l > epsilon) {
+        double mid = (l + r) / 2;
+        if (pow(2, mid) > exp(1.0)) r = mid;
+        else l = mid;
+    }
+    return (l + r) / 2;
 }
 
-// вычисление √2
+// вычисление sqrt2
 double sqrt2_limit(double epsilon) {
     double previous = 0.0, current = -0.5; // Начальное условие x0 = -0.5
     unsigned long iter = 0;
@@ -191,7 +243,7 @@ double sqrt2_limit(double epsilon) {
     do {
         iter++;
         previous = current;
-        // x(n+1) = x(n) - x(n)²/2 + 1
+        // x(n+1) = x(n) - x(n)^2/2 + 1
         current = previous - (previous * previous) / 2.0 + 1.0;
     } while (fabs(current - previous) >= epsilon && iter < MAX_ITERATIONS);
     
@@ -200,56 +252,62 @@ double sqrt2_limit(double epsilon) {
 
 double sqrt2_product(double epsilon) {
     double current = 1.0, previous = 0.0;
-    unsigned long iter = 1;
+    unsigned long k = 1;
     
-    do {// 2^(2^(-k))
-        iter++;
+    do {
         previous = current;
+        // Формула Виета: sqrt2 = 2 / (sqrt(1/2) × sqrt(1/2 + 1/2sqrt(1/2)) × ...)
+        double term = 1.0;
+        for (unsigned long i = 1; i <= k; i++) {
+            term *= 2.0;
+            term = sqrt(0.5 + 0.5 * term);
+        }
+        current = 2.0 / term;
         
-        double exponent = pow(2.0, -iter);
-        current *= pow(2.0, exponent);
+        k++;
         
-    } while (fabs(current - previous) >= epsilon && iter < MAX_ITERATIONS);
+    } while (fabs(current - previous) >= epsilon && k < MAX_ITERATIONS);
     
     return current;
 }
 
-double sqrt2_equation() {
-    return sqrt(2.0);
+double sqrt2_equation(double epsilon) {
+    // x^2 = 2
+    double l = 1.0, r = 2.0;
+    while (r - l > epsilon) {
+        double mid = (l + r) / 2;
+        if (mid * mid > 2.0) r = mid;
+        else l = mid;
+    }
+    return (l + r) / 2;
 }
 
 // вычисление y это (постоянная Эйлера-Маскерони)
 double gamma_limit(double epsilon) {
+    // Использую метод через гармонические числа
     double previous = 0.0, current = 0.0;
-    int m = 1;
+    unsigned long n = 1;
     
     do {
-        m++;
+        n++;
         previous = current;
-        current = 0.0;
         
-        for (int k = 1; k <= m; k++) {
-            long long comb = coefficient_C(m, k);
-            double sign = (k % 2 == 0) ? 1.0 : -1.0;
-            double log_factorial = 0.0;
-            
-            // Вычисление ln(k!)
-            for (int i = 1; i <= k; i++) {
-                log_factorial += log(i);
-            }
-            // Добавляем член: C(m,k) × (-1)^k × ln(k!) / k
-            current += comb * sign * log_factorial / k;
+        // Вычисляем H_n - ln(n), где H_n - n-е гармоническое число
+        double harmonic = 0.0;
+        for (unsigned long i = 1; i <= n; i++) {
+            harmonic += 1.0 / i;
         }
+        current = harmonic - log(n);
         
-    } while (fabs(current - previous) >= epsilon && m < 100);
+    } while (fabs(current - previous) >= epsilon && n < MAX_ITERATIONS);
     
     return current;
 }
 
 double gamma_series(double epsilon) {
 
-    double pi = pi_equation();
-    double sum = -pi * pi / 6.0; // Начальное значение: -π²/6
+    double pi = pi_equation(epsilon);
+    double sum = -pi * pi / 6.0; // Начальное значение: -π^2/6
     double previous = 0.0, before_previous = 0.0;
     unsigned long k = 1;
     
@@ -259,7 +317,7 @@ double gamma_series(double epsilon) {
         previous = sum;
         
         int sqrt_k = (int)sqrt(k);
-        double term = 1.0 / (sqrt_k * sqrt_k) - 1.0 / k; // Член ряда: 1/[√k]² - 1/k
+        double term = 1.0 / (sqrt_k * sqrt_k) - 1.0 / k; // Член ряда: 1/[sqrt(k)]^2 - 1/k
         sum += term;
         
     } while ((fabs(sum - previous) >= epsilon || fabs(previous - before_previous) >= epsilon) && 
