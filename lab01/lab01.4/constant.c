@@ -4,7 +4,7 @@
 #include <limits.h>
 #include "constant.h"
 
-#define MAX_ITERATIONS 10000000
+#define MAX_ITERATIONS 7000
 
 long long coefficient_C(int n, int k) {
     if (k < 0 || k > n) return 0;
@@ -225,12 +225,23 @@ double ln2_series(double epsilon) {
 }
 
 double ln2_equation(double epsilon) {
-    // 2^x = e
+    // e^x = 2
     double l = 0.0, r = 1.0;
+    
     while (r - l > epsilon) {
         double mid = (l + r) / 2;
-        if (pow(2, mid) > exp(1.0)) r = mid;
-        else l = mid;
+        double exp_mid = 1.0 + mid;
+        double term = mid;
+        for (int i = 2; i < 20; i++) {
+            term *= mid / i;
+            exp_mid += term;
+        }
+        
+        if (exp_mid > 2.0) {
+            r = mid;  // Слишком большой x
+        } else {
+            l = mid;  // Слишком маленький x
+        }
     }
     return (l + r) / 2;
 }

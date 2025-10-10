@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <limits.h>
 
-#define MAX_ITERATIONS 10000000
+#define MAX_ITERATIONS 7000
 
 long long factorial(int n);
 long long coefficient_C(int n, int k);

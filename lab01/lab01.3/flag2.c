@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-#include "operations.h"
+#include "../include/status.h"
+#include "../include/operations.h"
 
-bool check_double(double x1, double x2, double epsilon) {
+bool check_double(double x1, double x2, double epsilon){
     return fabs(x1 - x2) < epsilon;
 }
 
-void quadro_resh(double a, double b, double c, double epsilon) {
+void quadro_resh(double a, double b, double c, double epsilon){
     if (check_double(a, 0.0, epsilon) && check_double(b, 0.0, epsilon) && check_double(c, 0.0, epsilon)) {
         printf("Решений бесконечно много\n");
         return;
@@ -27,7 +28,7 @@ void quadro_resh(double a, double b, double c, double epsilon) {
 
     double D = b * b - 4 * a * c;
     
-    if (check_double(D, 0.0, epsilon)) {
+    if (check_double(D, 0.0, epsilon)){
         double x = -b / (2 * a);
         printf("Один корень: x = %f\n", x);
     }

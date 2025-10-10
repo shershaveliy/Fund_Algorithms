@@ -1,2 +1,2 @@
 all:
-	gcc main.c flag.c -o program.exe
+	gcc main.c src/flag.c src/status.c -o program.exe
