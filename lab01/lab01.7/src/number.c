@@ -10,21 +10,18 @@ int find_min_base(const char* number) {
     }
 
     const char* ptr = number;
-    int max_digit = 1; // Минимальная цифра - 1 (цифра 0 не влияет на основание)
+    int max_digit = 1; // Минимальная цифра - 1
     
-    // Пропускаем знак минус если есть
     if (*ptr == '-') {
         ptr++;
     }
     
-    // Пропускаем ведущие нули для определения значимых цифр
     while (*ptr == '0' && *(ptr + 1) != '\0') {
         ptr++;
     }
     
-    // Если после ведущих нулей строка пуста, это число 0
     if (*ptr == '\0') {
-        return 2; // Для числа 0 минимальное основание 2
+        return 2;
     }
     
     // Находим максимальную цифру в числе
@@ -47,7 +44,6 @@ int find_min_base(const char* number) {
         ptr++;
     }
     
-    // Минимальное основание = max_digit + 1, но не менее 2
     return (max_digit + 1 > 2) ? max_digit + 1 : 2;
 }
 
@@ -61,21 +57,17 @@ char* remove_leading_zeros(const char* number) {
     const char* ptr = number;
     int is_negative = 0;
     
-    // Обрабатываем знак минус
     if (*ptr == '-') {
         is_negative = 1;
         ptr++;
     }
     
-    // Пропускаем ведущие нули
     while (*ptr == '0' && *(ptr + 1) != '\0') {
         ptr++;
     }
     
-    // Вычисляем длину результата
     int len = strlen(ptr);
     if (len == 0) {
-        // Все цифры были нулями - возвращаем "0"
         char* result = malloc(2);
         strcpy(result, "0");
         return result;
@@ -84,7 +76,6 @@ char* remove_leading_zeros(const char* number) {
     // Выделяем память с учетом знака
     char* result = malloc(len + is_negative + 1);
     
-    // Формируем результат
     if (is_negative) {
         result[0] = '-';
         strcpy(result + 1, ptr);
@@ -104,13 +95,11 @@ long long convert_to_decimal(const char* num_str, int base) {
     int sign = 1;
     const char* ptr = num_str;
     
-    // Обрабатываем знак
     if (*ptr == '-') {
         sign = -1;
         ptr++;
     }
     
-    // Конвертируем
     while (*ptr != '\0') {
         char c = toupper(*ptr);
         int digit;
@@ -135,12 +124,10 @@ int is_valid_number_for_base(const char* number, int base) {
     
     const char* ptr = number;
     
-    // Пропускаем знак минус
     if (*ptr == '-') {
         ptr++;
     }
     
-    // Проверяем каждую цифру
     while (*ptr != '\0') {
         char c = toupper(*ptr);
         int digit;
@@ -150,11 +137,10 @@ int is_valid_number_for_base(const char* number, int base) {
         } else if (c >= 'A' && c <= 'Z') {
             digit = c - 'A' + 10;
         } else {
-            return 0; // Некорректный символ
-        }
+            return 0; 
         
         if (digit >= base) {
-            return 0; // Цифра превышает основание
+            return 0;
         }
         
         ptr++;

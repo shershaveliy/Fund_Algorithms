@@ -81,7 +81,6 @@ int main() {
             break;
         }
         
-        // Проверяем корректность числа
         if (!is_valid_number(input, base)) {
             print_status(INVALID_NUMBER);
             continue;

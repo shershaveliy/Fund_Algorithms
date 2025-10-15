@@ -29,7 +29,6 @@ int process_file(const char* input_filename, const char* output_filename) {
         char* token = strtok(buffer, " \t\n\r");
         
         while (token != NULL) {
-            // Пропускаем пустые токены
             if (strlen(token) == 0) {
                 token = strtok(NULL, " \t\n\r");
                 continue;
@@ -39,13 +38,10 @@ int process_file(const char* input_filename, const char* output_filename) {
             int min_base = find_min_base(token);
             
             if (min_base >= 2 && min_base <= 36) {
-                // Удаляем ведущие нули
                 char* cleaned_number = remove_leading_zeros(token);
                 
-                // Конвертируем в десятичную систему
                 long long decimal_value = convert_to_decimal(cleaned_number, min_base);
                 
-                // Записываем результат
                 fprintf(output_file, "%s %d %lld\n", cleaned_number, min_base, decimal_value);
                 
                 free(cleaned_number);
