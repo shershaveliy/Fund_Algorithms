@@ -3,7 +3,6 @@
 #include "include/file.h"
 
 int main() {
-    printf("Testing functions:\n\n");
     
     printf("strlen: %zu %zu\n", strlen("hello"), strlen(""));
     

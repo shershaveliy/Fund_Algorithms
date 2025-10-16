@@ -185,10 +185,10 @@ char *strstr(const char *haystack, const char *needle){
 }
 
 // Разделитель
-static int is_delimiter(char c, const char *delim) {
+static int delimiter(char c, const char *delim){
     const char *d = delim;
-    while (*d != '\0') {
-        if (c == *d) {
+    while(*d != '\0'){
+        if(c == *d){
             return 1;
         }
         d++;
@@ -196,37 +196,37 @@ static int is_delimiter(char c, const char *delim) {
     return 0;
 }
 
-char *strtok(char *str, const char *delim)
-{
+char *strtok(char *str, const char *delim){
     static char *saved = NULL;
     char *start;
     
-    if (str != NULL) {
+    if(str != NULL){
         saved = str;
     }
     
-    if (saved == NULL || *saved == '\0') {
+    if(saved == NULL || *saved == '\0'){
         return NULL;
     }
     
     start = saved;
-    while (*start != '\0' && is_delimiter(*start, delim)) {
+    while(*start != '\0' && delimiter(*start, delim)) {
         start++;
     }
     
-    if (*start == '\0') {
+    if(*start == '\0'){
         saved = NULL;
         return NULL;
     }
     
     char *end = start;
-    while (*end != '\0' && !is_delimiter(*end, delim)) {
+    while(*end != '\0' && !delimiter(*end, delim)) {
         end++;
     }
     
-    if (*end == '\0') {
+    if(*end == '\0'){
         saved = NULL;
-    } else {
+    }
+    else{
         *end = '\0';
         saved = end + 1;
     }
