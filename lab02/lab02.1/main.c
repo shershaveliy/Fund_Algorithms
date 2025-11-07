@@ -23,7 +23,7 @@ int main(){
     }
 
     printf("Тест 2, основание 2656572, дроби 0.5, 0.2, 0.333\n");
-    status = check_all(&results, 2656572, 3, 0.5, 0.2, 0.333);
+    status = check_all(&results, 2656572, 3, 0.5, 0.2, 1.0/2656572);
     if(status == OK){
         print_results(results, 3);
         free(results);

@@ -1,0 +1,14 @@
+1 Ivan Petrov CS101 5 4 5 4 5
+2 Maria Ivanova CS101 4 5 4 5 4
+3 Alexey Sidorov CS102 3 4 3 4 3
+4 Anna Smirnova CS102 5 5 5 5 5
+5 Dmitry Kuznetsov CS101 4 4 4 4 4
+6 Ekaterina Popova CS103 5 5 4 5 5
+7 Sergey Volkov CS103 3 3 4 3 4
+8 Olga Lebedeva CS102 4 5 4 5 4
+wuery uweyr hjhjhj
+9 555 87898 
+10
+29 Olga Lebedeva CS102 4 5 4 5 4
+11 Hhh KKJJ 666666
+12 Olga Lebedeva CS102 4 5 4 5

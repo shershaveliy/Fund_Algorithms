@@ -39,7 +39,6 @@ static Status check_one(bool* result, int base, double number){
     //в разложение основания N на простые множители.
 
     // Дробь в деление целых
-
     long long denominator = 1;
     long long numerator = inint(number, &denominator);
 
